@@ -1,4 +1,5 @@
 import ProductController from './product.controller.js';
+import { upload } from "../../middlewares/fileupload.middleware.js"
 // Manages rotes/paths to ProductController
 
 //1. Import express
@@ -10,6 +11,8 @@ const productRouter = express.Router(); //Router is a method here
 //All the paths to controller methods.
 const productController = new ProductController();
 productRouter.get("/", productController.getAllProducts);
-productRouter.post("/", productController.addProducts);
+productRouter.post("/",
+    upload.single('imageUrl'),
+    productController.addProducts);
 
 export default productRouter;
