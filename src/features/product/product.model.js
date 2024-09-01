@@ -21,7 +21,6 @@ export default class ProductModel {
     }
 }
 
-
 var products = [
     new ProductModel(
         1,
