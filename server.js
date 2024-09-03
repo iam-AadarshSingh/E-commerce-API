@@ -10,6 +10,7 @@ import cartRouter from './src/features/cartItems/cartItems.routes.js';
 import apiDocs from './swagger.json' assert {type: 'json'};
 import loggerMiddleware from './src/middlewares/logger.middleware.js';
 import { ApplicationError } from './src/error-handler/applicationError.js';
+import connectToMongoDB from './src/config/mongodb.js';
 // 2. Create Server
 const server = express();
 
@@ -35,9 +36,9 @@ server.use(express.json());
 // Bearer <token>
 // for all requests related to product, redirect to product routes.
 // localhost:3200/api/products
-server.use("/api-docs", 
-swagger.serve, 
-swagger.setup(apiDocs)
+server.use("/api-docs",
+  swagger.serve,
+  swagger.setup(apiDocs)
 );
 
 server.use(loggerMiddleware);
@@ -56,27 +57,28 @@ server.get('/', (req, res) => {
 });
 
 // Error handler middleware
-server.use((err, req, res, next)=>{
+server.use((err, req, res, next) => {
   console.log(err);
-  if (err instanceof ApplicationError){
+  if (err instanceof ApplicationError) {
     res.status(err.code).send(err.message);
   }
 
   // server errors.
   res
-  .status(500)
-  .send(
-    'Something went wrong, please try later'
+    .status(500)
+    .send(
+      'Something went wrong, please try later'
     );
 });
 
 // 4. Middleware to handle 404 requests.
-server.use((req, res)=>{
+server.use((req, res) => {
   res.status(404).send("API not found. Please check our documentation for more information at localhost:3200/api-docs")
 });
 
 
 // 5. Specify port.
-server.listen(3200);
-
-console.log('Server is running at 3200');
+server.listen(3200, () => {
+  console.log('Server is running at 3200');
+  connectToMongoDB();
+});
